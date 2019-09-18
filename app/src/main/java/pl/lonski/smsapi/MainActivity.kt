@@ -19,8 +19,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setupPermissions()
-
-        Server().start()
+        Server(8055).start()
     }
 
     private fun setupPermissions() {
@@ -33,7 +32,7 @@ class MainActivity : AppCompatActivity() {
     }
 }
 
-class Server : NanoHTTPD(8055) {
+class Server(port: Int) : NanoHTTPD(port) {
 
     override fun serve(session: IHTTPSession?): Response {
         session?.parseBody(HashMap())
@@ -50,8 +49,7 @@ class Server : NanoHTTPD(8055) {
 
     private fun sendSms(recipient: String, message: String): Response {
         try {
-            SmsManager.getDefault().sendTextMessage(
-                    "+$recipient", null, message, null, null)
+            SmsManager.getDefault().sendTextMessage("+$recipient", null, message, null, null)
         } catch (e: Exception) {
             return newFixedLengthResponse(INTERNAL_ERROR, "text/html", "ERR: ${e.message}")
         }
